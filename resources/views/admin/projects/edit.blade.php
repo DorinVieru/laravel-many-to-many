@@ -66,6 +66,20 @@
                         <div class="text-danger fw-semibold">{{ $message }}</div>
                     @enderror
                 </div>
+                <div class="mb-3">
+                    <label for="technology_id" class="control-label mb-1">Seleziona la tecnologia utilizzata</label>
+                    <div>
+                        @foreach ($technologies as $tech)
+                            <div class="form-check-inline">
+                                <input type="checkbox" name="technologies[]" id="technology{{ $tech->id }}" class="form-check-input" value="{{ $tech->id }}" @checked(is_array(old('technologies')) && in_array($tech->id, old('technologies')))>
+                                <label for="" class="form-check-label {{ $tech->badge_class }} my_badge">{{ $tech->name }}</label>
+                            </div>
+                        @endforeach
+                    </div>
+                    @error ('type_id')
+                        <div class="text-danger fw-semibold">{{ $message }}</div>
+                    @enderror
+                </div>
                 <div class="d-flex justify-content-center mb-5">
                     <button type="submit" class="btn btn-warning px-5 fs-4">Modifica ora il progetto</button>
                 </div>

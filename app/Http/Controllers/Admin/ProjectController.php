@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 use App\Models\Type;
+use App\Models\Technology;
 
 class ProjectController extends Controller
 {
@@ -35,8 +36,11 @@ class ProjectController extends Controller
     {
         // RECUPERO I TIPI DI PROGETTO PER POTERLI CICLARE NELLA SELECT
         $types = Type::all();
+
+        // RECUPERO LE TECNOLOGIE PER PROGETTO PER POTERLI CICLARE NELLA CHECKBOX
+        $technologies = Technology::all();
         
-        return view('admin.projects.create', compact('types'));
+        return view('admin.projects.create', compact('types', 'technologies'));
     }
 
     /**
@@ -66,6 +70,11 @@ class ProjectController extends Controller
 
         // SALVO I DATI
         $project->save();
+
+        // VERIFICARE SE REQUEST HA TECHNOLOGIES
+        if($request->has('technologies')){
+            $project->technologies()->attach($form_projects['technologies']);
+        }
 
         // FACCIO IL REDIRECT ALLA PAGINA SHOW 
         return redirect()->route('admin.projects.show', ['project' => $project]);
@@ -97,9 +106,13 @@ class ProjectController extends Controller
             $error_message = $messages['error_message'];
         }
 
+        // Recupero i tipi di progetto
         $types = Type::all();
 
-        return view('admin.projects.edit', compact('project', 'types', 'error_message'));
+        // Recupero le tecnologie del progetto
+        $technologies = Technology::all();
+
+        return view('admin.projects.edit', compact('project', 'types', 'error_message', 'technologies'));
     }
 
     /**
@@ -139,6 +152,11 @@ class ProjectController extends Controller
         // SALVO I DATI
         $project->update($form_projects);
 
+        // VERIFICARE SE REQUEST HA TECHNOLOGIES
+        if ($request->has('technologies')) {
+            $project->technologies()->sync($form_projects['technologies']);
+        }
+
         // FACCIO IL REDIRECT ALLA PAGINA SHOW 
         return redirect()->route('admin.projects.index');
     }
@@ -151,6 +169,9 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+        // CANCELLO LE TECHS DEI PROGETTI A MANO (in realtà esiste cascadeOnDelete())
+        // $project->technologies()->sync([]);
+        
         // CANCELLO L'IMMAGINE
         if($project->cover_image != null){
             Storage::disk('public')->delete($project->cover_image);

@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Technology extends Model
 {
     use HasFactory;
+
+    // INDICO I CAMPI FILLABLE
+    protected $fillable = ['name', 'badge_class', 'slug'];
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class);
+    }
 }

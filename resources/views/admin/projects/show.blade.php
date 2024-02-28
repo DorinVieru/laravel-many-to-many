@@ -12,8 +12,18 @@
                         <p class="card-text">{{ $project->description }}</p>
                     </div>
                         <ul class="list-group list-group-flush">
+                            {{-- TIPO DI PROGETTO --}}
                             <li class="list-group-item"><strong>Tipo di progetto:</strong> {{ $project->type != null ? $project->type->name : 'Non assegnato' }}</li>
+                            {{-- SLUG --}}
                             <li class="list-group-item"><strong>Slug:</strong> {{ $project->slug }}</li>
+                            {{-- TECH --}}
+                            <li class="list-group-item"><strong>Techs:</strong> 
+                                @forelse ($project->technologies as $tech)
+                                    <div class="my_badge d-inline-block mx-1 {{ $tech->badge_class }}">{{ $tech->name }}</div>
+                                @empty
+                                    Il progetto non ha tecnologie assegnate.
+                                @endforelse
+                            </li>
                         </ul>
                     <div class="card-body">
                         <a href="{{ $project->cover_image !== null ? asset('/storage/' . $project->cover_image) : asset('/img/another-image.jpg') }}" target="_blank" class="btn btn-primary"><i class="fa-solid fa-download"></i> Scarica l'immagine</a>
